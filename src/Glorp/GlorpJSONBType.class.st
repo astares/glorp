@@ -1,3 +1,6 @@
+"
+JSONB type
+"
 Class {
 	#name : #GlorpJSONBType,
 	#superclass : #GlorpJSONType,

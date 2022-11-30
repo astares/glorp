@@ -1,3 +1,6 @@
+"
+UUID type
+"
 Class {
 	#name : #GlorpUUIDType,
 	#superclass : #GlorpDatabaseType,

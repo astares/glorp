@@ -1,3 +1,6 @@
+"
+JSON type
+"
 Class {
 	#name : #GlorpJSONType,
 	#superclass : #GlorpAbstractStringType,

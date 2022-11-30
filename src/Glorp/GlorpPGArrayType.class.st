@@ -1,3 +1,6 @@
+"
+Postgres Array type
+"
 Class {
 	#name : #GlorpPGArrayType,
 	#superclass : #GlorpAbstractStringType,

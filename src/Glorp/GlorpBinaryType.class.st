@@ -1,3 +1,6 @@
+"
+Binary type
+"
 Class {
 	#name : #GlorpBinaryType,
 	#superclass : #GlorpDatabaseType,
