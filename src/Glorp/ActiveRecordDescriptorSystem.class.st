@@ -14,14 +14,14 @@ Class {
 }
 
 { #category : #'instance creation' }
-ActiveRecordDescriptorSystem class >> sessionForAccessor: aDatabaseAccesor [.
+ActiveRecordDescriptorSystem class >> sessionForAccessor: aDatabaseAccesor [
 	"Create a session associated with the given accesseor, and using us as a descriptor system. 
 	This is the easiest way to get a full blown session going."
-	
-	^(ActiveRecordSession forSystem: (self forPlatform: aDatabaseAccesor platform))
-		accessor: aDatabaseAccesor;
-		yourself
 
+	^ (ActiveRecordSession forSystem:
+			   (self forPlatform: aDatabaseAccesor platform))
+		  accessor: aDatabaseAccesor;
+		  yourself
 ]
 
 { #category : #'instance creation' }
