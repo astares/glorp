@@ -93,7 +93,7 @@ AbstractProxy >> inspect [
 	^self getValue inspect
 ]
 
-{ #category : #'initialize-release' }
+{ #category : #initialization }
 AbstractProxy >> instVarAt: index [ 
 	"Primitive. Answer a fixed variable in an object. The numbering of the 
 	variables corresponds to the named instance variables. Fail if the index 
@@ -198,7 +198,7 @@ AbstractProxy >> printStringLimitedTo: limit [
 	^ limitedString , '...etc...'
 ]
 
-{ #category : #'initialize-release' }
+{ #category : #initialization }
 AbstractProxy >> proxyInitialize [
 
 	isInstantiated := false
