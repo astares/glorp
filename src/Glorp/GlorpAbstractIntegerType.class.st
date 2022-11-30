@@ -7,6 +7,12 @@ Class {
 	#category : #'Glorp-Types'
 }
 
+{ #category : #testing }
+GlorpAbstractIntegerType class >> isAbstract [
+		
+	^ self == GlorpAbstractIntegerType
+]
+
 { #category : #converting }
 GlorpAbstractIntegerType >> converterForStType: aClass [
 	(aClass includesBehavior: Boolean) ifTrue: [^self platform converterNamed: #booleanToInteger].
