@@ -14,8 +14,14 @@ Class {
 		'value',
 		'isInstantiated'
 	],
-	#category : 'Glorp-Queries'
+	#category : #'Glorp-Queries'
 }
+
+{ #category : #testing }
+AbstractProxy class >> isAbstract [
+		
+	^ self == AbstractProxy
+]
 
 { #category : #'instance creation' }
 AbstractProxy class >> new [
