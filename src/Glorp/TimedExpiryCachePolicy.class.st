@@ -13,68 +13,72 @@ Class {
 	#instVars : [
 		'timeout'
 	],
-	#category : 'Glorp-Core'
+	#category : #'Glorp-Core'
 }
 
 { #category : #'wrap/unwrap' }
 TimedExpiryCachePolicy >> cacheEntryFor: anObject [
 
-	^Array with: self totalSeconds with: anObject.
+	^ Array with: self totalSeconds with: anObject
 ]
 
 { #category : #'wrap/unwrap' }
 TimedExpiryCachePolicy >> contentsOf: aCacheEntry [
 
-	^aCacheEntry at: 2.
+	^ aCacheEntry at: 2
 ]
 
 { #category : #'wrap/unwrap' }
 TimedExpiryCachePolicy >> expire: aCacheEntry [
 
-	^aCacheEntry at: 1 put: 0.
+	^ aCacheEntry at: 1 put: 0
 ]
 
 { #category : #'wrap/unwrap' }
 TimedExpiryCachePolicy >> hasExpired: aCacheEntry [
 
-	^(self totalSeconds - (aCacheEntry at: 1)) >= timeout.
+	^ self totalSeconds - (aCacheEntry at: 1) >= timeout
 ]
 
 { #category : #initialize }
 TimedExpiryCachePolicy >> initialize [
 
 	super initialize.
-	timeout := 300.
+	timeout := 300
 ]
 
 { #category : #'wrap/unwrap' }
 TimedExpiryCachePolicy >> markEntryAsCurrent: aCacheEntry in: aCache [
 
-	aCacheEntry at: 1 put: self totalSeconds.
+	aCacheEntry at: 1 put: self totalSeconds
 ]
 
 { #category : #accessing }
 TimedExpiryCachePolicy >> timeout [
-	^timeout
+
+	^ timeout
 ]
 
 { #category : #accessing }
 TimedExpiryCachePolicy >> timeout: seconds [
+
 	timeout := seconds
 ]
 
 { #category : #accessing }
 TimedExpiryCachePolicy >> timeoutSeconds [
-	^timeout
+
+	^ timeout
 ]
 
 { #category : #accessing }
 TimedExpiryCachePolicy >> timeoutSeconds: anInteger [
-	timeout := anInteger.
+
+	timeout := anInteger
 ]
 
 { #category : #utility }
 TimedExpiryCachePolicy >> totalSeconds [
 
-	^Dialect totalSeconds.
+	^ Dialect totalSeconds
 ]

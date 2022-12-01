@@ -37,115 +37,129 @@ ActiveRecordDescriptorSystem class >> sessionForLogin: aGlorpLogin [
 
 { #category : #adding }
 ActiveRecordDescriptorSystem >> addToManyRelationshipNamed: aName inDescriptor: aDescriptor toClass: aClass [
+
 	| ivars realFromClass package |
-	package := ((Array with: self rootClass package name), self rootClass tags) joinUsing: '-'.
+	package := (Array with: self rootClass package name)
+	           , self rootClass tags joinUsing: '-'.
 	realFromClass := self tableClassForClass: aDescriptor describedClass.
-	realFromClass methodDictionary at: aName asSymbol ifAbsent: [ 
-		"We need to stick in an ivar and accessor for the relationship proxy"
-		ivars := realFromClass instVarNames.
-		(ivars includes: aName asSymbol) ifFalse: [
-			classesWereModified := true.
-			ivars := ivars copyWith: aName.
-			realFromClass superclass
-				subclass: realFromClass name
-				instanceVariableNames: (ivars joinUsing: ' ')
-				classVariableNames: realFromClass classVariablesString
-				package: package.
-				
+	realFromClass methodDictionary
+		at: aName asSymbol
+		ifAbsent: [ "We need to stick in an ivar and accessor for the relationship proxy"
+			ivars := realFromClass instVarNames.
+			(ivars includes: aName asSymbol) ifFalse: [ 
+				classesWereModified := true.
+				ivars := ivars copyWith: aName.
+				realFromClass superclass
+					subclass: realFromClass name
+					instanceVariableNames: (ivars joinUsing: ' ')
+					classVariableNames: realFromClass classVariablesString
+					package: package.
+
 				(RBCreateAccessorsForVariableRefactoring
-					variable: aName asSymbol
-					class: realFromClass
-					classVariable: false) execute ]
-		].
+					 variable: aName asSymbol
+					 class: realFromClass
+					 classVariable: false) execute ] ].
 	"Set up the descriptor"
 	aDescriptor mappings
 		detect: [ :m | m attribute name = aName ]
-		ifNone: [ | mapping table |
+		ifNone: [ 
+			| mapping table |
 			table := self tableForClass: aClass.
 			mapping := (aDescriptor newMapping: ToManyMapping)
-				attributeName: aName;
-				referenceClass: (self tableClassForClass: aClass).
-				table fields detect: [ :ea | self isSortingField: ea ] 
-					ifFound: [:f |
-						mapping orderBy: (inflector accessor: f name asSymbol); writeTheOrderField ] ]
+				           attributeName: aName;
+				           referenceClass: (self tableClassForClass: aClass).
+			table fields
+				detect: [ :ea | self isSortingField: ea ]
+				ifFound: [ :f | 
+					mapping
+						orderBy: (inflector accessor: f name asSymbol);
+						writeTheOrderField ] ]
 ]
 
 { #category : #adding }
 ActiveRecordDescriptorSystem >> addToManyRelationshipNamed: aName inDescriptor: aDescriptor toClass: aClass join: aJoin [
+
 	| ivars realFromClass package |
-	package := ((Array with: self rootClass package name), self rootClass tags) joinUsing: '-'.
+	package := (Array with: self rootClass package name)
+	           , self rootClass tags joinUsing: '-'.
 	realFromClass := self tableClassForClass: aDescriptor describedClass.
-	realFromClass methodDictionary at: aName asSymbol ifAbsent: [ 
-		"We need to stick in an ivar and accessor for the relationship proxy"
-		ivars := realFromClass instVarNames.
-		(ivars includes: aName asSymbol) ifFalse: [
-			classesWereModified := true.
-			ivars := ivars copyWith: aName.
-			realFromClass superclass
-				subclass: realFromClass name
-				instanceVariableNames: (ivars joinUsing: ' ')
-				classVariableNames: realFromClass classVariablesString
-				package: package.
-				
+	realFromClass methodDictionary
+		at: aName asSymbol
+		ifAbsent: [ "We need to stick in an ivar and accessor for the relationship proxy"
+			ivars := realFromClass instVarNames.
+			(ivars includes: aName asSymbol) ifFalse: [ 
+				classesWereModified := true.
+				ivars := ivars copyWith: aName.
+				realFromClass superclass
+					subclass: realFromClass name
+					instanceVariableNames: (ivars joinUsing: ' ')
+					classVariableNames: realFromClass classVariablesString
+					package: package.
+
 				(RBCreateAccessorsForVariableRefactoring
-					variable: aName asSymbol
-					class: realFromClass
-					classVariable: false) execute ]
-		].
+					 variable: aName asSymbol
+					 class: realFromClass
+					 classVariable: false) execute ] ].
 	"Set up the descriptor"
 	aDescriptor mappings
 		detect: [ :m | m attribute name = aName ]
-		ifNone: [ | mapping |
+		ifNone: [ 
+			| mapping |
 			mapping := (aDescriptor newMapping: ManyToManyMapping)
-				attributeName: aName;
-				referenceClass: (self tableClassForClass: aClass).
-				aJoin allTables anyOne fields detect: [ :ea | self isSortingField: ea ] 
-					ifFound: [ :f | mapping orderBy: (inflector accessor: f name asSymbol); writeTheOrderField ] ]
+				           attributeName: aName;
+				           referenceClass: (self tableClassForClass: aClass).
+			aJoin allTables anyOne fields
+				detect: [ :ea | self isSortingField: ea ]
+				ifFound: [ :f | 
+					mapping
+						orderBy: (inflector accessor: f name asSymbol);
+						writeTheOrderField ] ]
 ]
 
 { #category : #adding }
 ActiveRecordDescriptorSystem >> addToOneRelationshipNamed: aName inDescriptor: aDescriptor toClass: aClass [
+
 	| ivars realFromClass package |
-	package := ((Array with: self rootClass package name), self rootClass tags) joinUsing: '-'.
+	package := (Array with: self rootClass package name)
+	           , self rootClass tags joinUsing: '-'.
 	realFromClass := self tableClassForClass: aDescriptor describedClass.
-	realFromClass methodDictionary at: aName asSymbol ifAbsent: [  
-		"We need to stick in an ivar and accessor for the relationship proxy"
-		ivars := realFromClass instVarNames.
-		(ivars includes: aName asSymbol) ifFalse: [ 
-			classesWereModified := true.
-			ivars := ivars copyWith: aName.
-			realFromClass superclass
-				subclass: realFromClass name
-				instanceVariableNames: (ivars joinUsing: ' ')
-				classVariableNames: realFromClass classVariablesString
-				package: package 
-		].
-					
+	realFromClass methodDictionary
+		at: aName asSymbol
+		ifAbsent: [ "We need to stick in an ivar and accessor for the relationship proxy"
+			ivars := realFromClass instVarNames.
+			(ivars includes: aName asSymbol) ifFalse: [ 
+				classesWereModified := true.
+				ivars := ivars copyWith: aName.
+				realFromClass superclass
+					subclass: realFromClass name
+					instanceVariableNames: (ivars joinUsing: ' ')
+					classVariableNames: realFromClass classVariablesString
+					package: package ].
+
 			(RBCreateAccessorsForVariableRefactoring
-				variable: aName asSymbol
-				class: realFromClass
-				classVariable: false) execute 
-	].
+				 variable: aName asSymbol
+				 class: realFromClass
+				 classVariable: false) execute ].
 	"Set up the descriptor"
 	aDescriptor mappings
 		detect: [ :m | m attribute name = aName ]
 		ifNone: [ 
 			(aDescriptor newMapping: OneToOneMapping)
 				attributeName: aName asSymbol;
-				referenceClass: (self tableClassForClass: aClass)].
-	
-		
+				referenceClass: (self tableClassForClass: aClass) ]
 ]
 
 { #category : #initialization }
-ActiveRecordDescriptorSystem >> allClasses [ 
-	^allClasses 
-		ifEmpty: [ self constructAllClasses ] 
-		ifNotEmpty: [ allClasses ]
+ActiveRecordDescriptorSystem >> allClasses [
+
+	^ allClasses
+		  ifEmpty: [ self constructAllClasses ]
+		  ifNotEmpty: [ allClasses ]
 ]
 
 { #category : #accessing }
 ActiveRecordDescriptorSystem >> allDescriptors [
+
 	descriptors ifEmpty: [ 
 		classesWereModified := false.
 		self constructAllDescriptors.
@@ -153,10 +167,10 @@ ActiveRecordDescriptorSystem >> allDescriptors [
 		Build them again. This should only happen during development when making changes."
 		classesWereModified ifTrue: [ 
 			descriptors := Dictionary new.
-			classesWereModified := false. 
+			classesWereModified := false.
 			self constructAllDescriptors.
-			classesWereModified ifTrue: [self error: 'There is a bug here!'] ] ].
-	^super allDescriptors.
+			classesWereModified ifTrue: [ self error: 'There is a bug here!' ] ] ].
+	^ super allDescriptors
 ]
 
 { #category : #private }
@@ -251,11 +265,13 @@ ActiveRecordDescriptorSystem >> constructAllClasses [
 
 { #category : #private }
 ActiveRecordDescriptorSystem >> constructAllDescriptors [
-	self postInitializeAllDescriptors.
+
+	self postInitializeAllDescriptors
 ]
 
 { #category : #initialization }
 ActiveRecordDescriptorSystem >> constructAllTables [
+
 	| tableNames accessor |
 	accessor := self session accessor.
 	accessor isLoggedIn ifFalse: [ accessor login ].
@@ -267,6 +283,7 @@ ActiveRecordDescriptorSystem >> constructAllTables [
 
 { #category : #private }
 ActiveRecordDescriptorSystem >> constructTableForeignKeys [
+
 	tables keysAndValuesDo: [ :key :table | 
 		| foreignKeys |
 		foreignKeys := table fields select: [ :field | field name endsWith: '_id' ].
@@ -282,22 +299,25 @@ ActiveRecordDescriptorSystem >> constructTableForeignKeys [
 				]
 			]
 		].
-	^tables
+	^ tables
 	 
 ]
 
 { #category : #accessing }
 ActiveRecordDescriptorSystem >> inflector [
+
 	^ inflector
 ]
 
 { #category : #accessing }
 ActiveRecordDescriptorSystem >> inflector: anObject [
+
 	inflector := anObject
 ]
 
 { #category : #initialization }
-ActiveRecordDescriptorSystem >> initialize [ 
+ActiveRecordDescriptorSystem >> initialize [
+
 	super initialize.
 	inflector := ActiveRecordInflector new.
 	classesWereModified := false.
@@ -308,8 +328,8 @@ ActiveRecordDescriptorSystem >> initialize [
 
 { #category : #private }
 ActiveRecordDescriptorSystem >> initializeDescriptor: aDescriptor [
-	| table directFields foreignKeys typeField |
 
+	| table directFields foreignKeys typeField |
 	"Locate the real table for this class - might be participating in single table inheritance"
 	table := self tableForClass: aDescriptor describedClass.
 	aDescriptor table: table.
@@ -402,78 +422,85 @@ ActiveRecordDescriptorSystem >> isLinkTable: aTable [
 
 { #category : #naming }
 ActiveRecordDescriptorSystem >> isSortingField: aFieldOrName [
+
 	| realName |
-	realName := aFieldOrName isString 
-		ifTrue: [ aFieldOrName asSymbol ] 
-		ifFalse: [ aFieldOrName name asSymbol ].
-		
-	^sortingFieldNames includes: realName
+	realName := aFieldOrName isString
+		            ifTrue: [ aFieldOrName asSymbol ]
+		            ifFalse: [ aFieldOrName name asSymbol ].
+
+	^ sortingFieldNames includes: realName
 ]
 
 { #category : #naming }
 ActiveRecordDescriptorSystem >> isTimestampField: aFieldOrName [
+
 	| realName |
-	realName := aFieldOrName isString 
-		ifTrue: [ aFieldOrName asSymbol ] 
-		ifFalse: [ aFieldOrName name asSymbol ].
-		
-	^#(created_at updated_at deleted_at) includes: realName
+	realName := aFieldOrName isString
+		            ifTrue: [ aFieldOrName asSymbol ]
+		            ifFalse: [ aFieldOrName name asSymbol ].
+
+	^ #( created_at updated_at deleted_at ) includes: realName
 ]
 
 { #category : #naming }
 ActiveRecordDescriptorSystem >> likelyClassForForeignKeyNamed: aKey [
+
 	| parts key cls |
-	parts := (aKey substrings: '_').
+	parts := aKey substrings: '_'.
 	parts := parts copyUpToLast: parts last.
 	cls := nil.
-	[ cls isNil and: [parts notEmpty]] whileTrue: [ 
+	[ cls isNil and: [ parts notEmpty ] ] whileTrue: [ 
 		key := inflector classify: (parts joinUsing: '_').
-		cls := allClasses 
-			detect: [ :ea | ea name = key ] 
-			ifNone: [ parts := parts copyWithoutFirst. nil]].
-		
-	^cls
-	
+		cls := allClasses detect: [ :ea | ea name = key ] ifNone: [ 
+			       parts := parts copyWithoutFirst.
+			       nil ] ].
+
+	^ cls
 ]
 
 { #category : #naming }
 ActiveRecordDescriptorSystem >> likelyTableForForeignKeyNamed: aKey [
+
 	| key table |
 	key := aKey asUppercase copyUpToLast: $_.
-	inflector pluralizeTableNames ifTrue: [ key := (inflector pluralize: key) asUppercase ].
+	inflector pluralizeTableNames ifTrue: [ 
+		key := (inflector pluralize: key) asUppercase ].
 	table := nil.
-	[ table isNil and: [key notEmpty]] whileTrue: [ 
-		table := tables 
-			at: key
-			ifAbsent: [ key := key copyAfter: $_. nil]].
-	table ifNil: [ | candidates |
+	[ table isNil and: [ key notEmpty ] ] whileTrue: [ 
+		table := tables at: key ifAbsent: [ 
+			         key := key copyAfter: $_.
+			         nil ] ].
+	table ifNil: [ 
+		| candidates |
 		key := aKey asUppercase copyUpToLast: $_.
-		inflector pluralizeTableNames ifTrue: [ key := (inflector pluralize: key) asUppercase ].
+		inflector pluralizeTableNames ifTrue: [ 
+			key := (inflector pluralize: key) asUppercase ].
 		candidates := tables keys select: [ :ea | ea endsWith: key ].
 		candidates ifNotEmpty: [ 
-			candidates sort: [ :a :b | (a size) < (b size) ].
-			table := tables at: candidates first.
-			] ].
-	^table
-	
+			candidates sort: [ :a :b | a size < b size ].
+			table := tables at: candidates first ] ].
+	^ table
 ]
 
 { #category : #accessing }
 ActiveRecordDescriptorSystem >> linkTables [
 	"Assumption is link tables have compound primary keys of foreign keys or is composed of only foreign keys, timestamps, 
 	and maybe a primary key, and maybe a single integer field used for ordering."
-	^self allTables values select: [ :table | self isLinkTable: table ]
+
+	^ self allTables values select: [ :table | self isLinkTable: table ]
 ]
 
 { #category : #accessing }
 ActiveRecordDescriptorSystem >> mappedTables [
 	"Assumption is link tables have compound primary keys of foreign keys or is composed of only foreign keys, timestamps, 
 	and maybe a primary key, and maybe a single integer field used for ordering."
-	^self allTables values reject: [ :table | self isLinkTable: table ]
+
+	^ self allTables values reject: [ :table | self isLinkTable: table ]
 ]
 
 { #category : #private }
 ActiveRecordDescriptorSystem >> postInitializeAllDescriptors [
+
 	super allDescriptors do: [ :ea | self postInitializeDescriptor: ea ].
 	self linkTables do: [ :linkTable |
 		linkTable foreignKeyConstraints do: [ :fromConstraint || descriptor fromClass join |
@@ -553,21 +580,25 @@ ActiveRecordDescriptorSystem >> postInitializeDescriptor: aDescriptor [
 
 { #category : #accessing }
 ActiveRecordDescriptorSystem >> prefix [
-	^inflector prefix
+
+	^ inflector prefix
 ]
 
 { #category : #accessing }
 ActiveRecordDescriptorSystem >> prefix: aString [
+
 	inflector prefix: aString
 ]
 
 { #category : #accessing }
 ActiveRecordDescriptorSystem >> rootClass [
-	^rootClass ifNil: [ ActiveRecordModel ]
+
+	^ rootClass ifNil: [ ActiveRecordModel ]
 ]
 
 { #category : #accessing }
 ActiveRecordDescriptorSystem >> rootClass: anObject [
+
 	rootClass := anObject
 ]
 
@@ -602,32 +633,39 @@ ActiveRecordDescriptorSystem >> sessionForLogin: aGlorpLogin [
 
 { #category : #accessing }
 ActiveRecordDescriptorSystem >> sortingFieldNames [
+
 	^ sortingFieldNames
 ]
 
 { #category : #accessing }
 ActiveRecordDescriptorSystem >> sortingFieldNames: anObject [
+
 	sortingFieldNames := anObject
 ]
 
 { #category : #naming }
-ActiveRecordDescriptorSystem >> tableClassForClass: aClass [ 
+ActiveRecordDescriptorSystem >> tableClassForClass: aClass [
+
 	| className |
-	className := (inflector classify: (self tableForClass: aClass) name) asSymbol.
-"	className := (inflector singularize: (self tableForClass: aClass) name toCamelCase capitalized asSymbol).
-"	^allClasses detect: [:ea | ea name = className] ifNone: [ self error: 'No table found for class ', aClass name ]
-	
+	className := (inflector classify: (self tableForClass: aClass) name)
+		             asSymbol.
+	"className := (inflector singularize: (self tableForClass: aClass) name toCamelCase capitalized asSymbol)."
+	^ allClasses
+		  detect: [ :ea | ea name = className ]
+		  ifNone: [ self error: 'No table found for class ' , aClass name ]
 ]
 
 { #category : #naming }
-ActiveRecordDescriptorSystem >> tableForClass: aClass [ 
+ActiveRecordDescriptorSystem >> tableForClass: aClass [
+
 	| table tableClass |
 	table := nil.
 	tableClass := aClass.
-	[ table ]
-		whileNil: [ table := tables
-				at: (inflector tableize: tableClass name) asUppercase
-				ifAbsent: [ tableClass := tableClass superclass. nil ] ].
-	^table
-	
+	[ table ] whileNil: [ 
+		table := tables
+			         at: (inflector tableize: tableClass name) asUppercase
+			         ifAbsent: [ 
+				         tableClass := tableClass superclass.
+				         nil ] ].
+	^ table
 ]

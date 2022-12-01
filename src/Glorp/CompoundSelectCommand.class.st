@@ -23,94 +23,103 @@ CompoundSelectCommand >> arrayBoundFields [
 
 { #category : #accessing }
 CompoundSelectCommand >> bindingTypes [
-	^self commands inject: #() into: [:sum :each | sum, each bindingTypes].
+
+	^ self commands
+		  inject: #(  )
+		  into: [ :sum :each | sum , each bindingTypes ]
 ]
 
 { #category : #accessing }
 CompoundSelectCommand >> bindings [
-	^commands inject: #() into: [:sum :each | sum, each bindings].
+
+	^ commands inject: #(  ) into: [ :sum :each | sum , each bindings ]
 ]
 
 { #category : #accessing }
 CompoundSelectCommand >> commands [
-	commands isNil ifTrue: [commands := query queries collect: [:each | each sqlWith: parameters]].
-	^commands.
+
+	commands isNil ifTrue: [ 
+		commands := query queries collect: [ :each | 
+			            each sqlWith: parameters ] ].
+	^ commands
 ]
 
 { #category : #testing }
 CompoundSelectCommand >> hasGrouping [
-	^self query hasGrouping
+
+	^ self query hasGrouping
 ]
 
 { #category : #testing }
 CompoundSelectCommand >> hasLimit [
 
-	^self query hasLimit
+	^ self query hasLimit
 ]
 
 { #category : #testing }
 CompoundSelectCommand >> hasOffset [
 
-	^self query hasOffset
+	^ self query hasOffset
 ]
 
 { #category : #testing }
 CompoundSelectCommand >> hasOrdering [
 
-	^self query hasOrdering
+	^ self query hasOrdering
 ]
 
 { #category : #accessing }
 CompoundSelectCommand >> parameters: aDictionary [
+
 	parameters := aDictionary.
-	commands := nil.
+	commands := nil
 ]
 
 { #category : #accessing }
 CompoundSelectCommand >> printSQL [
+
 	"Access doesn't like parenthesies around the first in a group of compound commands."
 
 	| skipFirst |
-	self requiresWrapperQuery
-		ifTrue: [
-			self nextPutAll: 'SELECT '.
-			self requiresDistinct
-				ifTrue:  [ self nextPutAll: 'DISTINCT '].
-			self nextPutAll: '* FROM '.
-			self platform supportsAliasInCompoundQuery ifTrue: [self nextPut: $( ]].
-	skipFirst := self platform parenthesizeAllButFirstCommandInCompoundQuery.
+	self requiresWrapperQuery ifTrue: [ 
+		self nextPutAll: 'SELECT '.
+		self requiresDistinct ifTrue: [ self nextPutAll: 'DISTINCT ' ].
+		self nextPutAll: '* FROM '.
+		self platform supportsAliasInCompoundQuery ifTrue: [ 
+			self nextPut: $( ] ].
+	skipFirst := self platform
+		             parenthesizeAllButFirstCommandInCompoundQuery.
 	GlorpHelper
-		do: 
-			[:each |
-			(self platform parenthesizeCommandsInCompoundQuery and: [skipFirst not])
-				ifTrue: [self nextPut: $(].
+		do: [ :each | 
+			(self platform parenthesizeCommandsInCompoundQuery and: [ 
+				 skipFirst not ]) ifTrue: [ self nextPut: $( ].
 			self nextPutAll: each sqlString.
-			(self platform parenthesizeCommandsInCompoundQuery and: [skipFirst not])
-				ifTrue: [self nextPut: $)].
-			skipFirst := false]
+			(self platform parenthesizeCommandsInCompoundQuery and: [ 
+				 skipFirst not ]) ifTrue: [ self nextPut: $) ].
+			skipFirst := false ]
 		for: self commands
-		separatedBy: [query printOperationOn: self].
-	(self requiresWrapperQuery and: [self platform supportsAliasInCompoundQuery])
-		ifTrue: 
-			[self nextPut: $).
-			query printCompoundSelectAliasesOn: self].
-		
+		separatedBy: [ query printOperationOn: self ].
+	(self requiresWrapperQuery and: [ 
+		 self platform supportsAliasInCompoundQuery ]) ifTrue: [ 
+		self nextPut: $).
+		query printCompoundSelectAliasesOn: self ].
+
 	query printOrderingOn: self.
 	query printGroupingOn: self.
 	query printPostLimitOn: self.
-	query printOffsetOn: self.
+	query printOffsetOn: self
 ]
 
 { #category : #testing }
 CompoundSelectCommand >> requiresDistinct [
-	^self query requiresDistinct.
+
+	^ self query requiresDistinct
 ]
 
 { #category : #testing }
 CompoundSelectCommand >> requiresWrapperQuery [
-    ^ self requiresDistinct
-		or: [ self hasOrdering
-			or: [ self hasGrouping
-				or: [ self hasLimit
-					or: [ self hasOffset ] ] ] ] 
+
+	^ self requiresDistinct or: [ 
+		  self hasOrdering or: [ 
+			  self hasGrouping or: [ self hasLimit or: [ self hasOffset ] ] ] ]
 ]
