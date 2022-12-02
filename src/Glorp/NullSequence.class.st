@@ -7,20 +7,20 @@ Class {
 	#classVars : [
 		'Singleton'
 	],
-	#category : 'Glorp-Database'
+	#category : #'Glorp-Database'
 }
 
 { #category : #'*Glorp' }
 NullSequence class >> default [
 
-	^self new.
+	^ self new
 ]
 
 { #category : #'*Glorp' }
 NullSequence class >> new [
 
-	Singleton isNil ifTrue: [Singleton := self basicNew].
-	^Singleton.
+	Singleton isNil ifTrue: [ Singleton := self basicNew ].
+	^ Singleton
 ]
 
 { #category : #public }

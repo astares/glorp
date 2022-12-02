@@ -4,7 +4,7 @@ Sequences for SQLite.
 Class {
 	#name : #SQLite3Sequence,
 	#superclass : #DatabaseSequence,
-	#category : 'Glorp-Database'
+	#category : #'Glorp-Database'
 }
 
 { #category : #sequencing }
@@ -13,7 +13,8 @@ SQLite3Sequence >> getSequenceValueFromDatabaseFor: aField in: aRow using: aSess
 
 { #category : #testing }
 SQLite3Sequence >> isIdentityColumn [
-	^true.
+
+	^ true
 ]
 
 { #category : #sequencing }

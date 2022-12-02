@@ -14,41 +14,47 @@ Class {
 		'name',
 		'fields'
 	],
-	#category : 'Glorp-Database'
+	#category : #'Glorp-Database'
 }
 
 { #category : #'*Glorp' }
 DatabaseIndex class >> forField: aField [
-	^(self new initialize)
-		addField: aField;
-		yourself
+
+	^ self new initialize
+		  addField: aField;
+		  yourself
 ]
 
 { #category : #'*Glorp' }
 DatabaseIndex class >> forFields: aCollection [
-	^(self new)
-		addFields: aCollection;
-		yourself
+
+	^ self new
+		  addFields: aCollection;
+		  yourself
 ]
 
 { #category : #'*Glorp' }
 DatabaseIndex class >> new [
-	^super new initialize.
+
+	^ super new initialize
 ]
 
 { #category : #'initialize-release' }
 DatabaseIndex >> addField: aField [
-	^fields add: aField
+
+	^ fields add: aField
 ]
 
 { #category : #initializing }
 DatabaseIndex >> addFields: aCollection [
+
 	fields addAll: aCollection
 ]
 
 { #category : #accessing }
 DatabaseIndex >> fields [
-	^fields.
+
+	^ fields
 ]
 
 { #category : #printing }
@@ -57,53 +63,75 @@ DatabaseIndex >> generateName [
 
 	| stream maxLength tableLength roomToBeVerbose minTableLength maxTableLength |
 	maxLength := fields first table platform maximumLengthOfTableName.
-	minTableLength := ((maxLength - 8) // 2) min: 10.
-	maxTableLength := (maxLength // 2) - 1.
+	minTableLength := maxLength - 8 // 2 min: 10.
+	maxTableLength := maxLength // 2 - 1.
 	roomToBeVerbose := minTableLength >= 10.
-	tableLength := roomToBeVerbose ifTrue: [maxTableLength] ifFalse: [minTableLength].
+	tableLength := roomToBeVerbose
+		               ifTrue: [ maxTableLength ]
+		               ifFalse: [ minTableLength ].
 
 	stream := WriteStream on: (String new: 100).
-	stream nextPutAll: (fields first table name copyFrom: 1 to: ((fields first table name size) min: tableLength)).
+	stream nextPutAll: (fields first table name
+			 copyFrom: 1
+			 to: (fields first table name size min: tableLength)).
 	stream nextPutAll: '_'.
-	stream nextPutAll: (fields first name copyFrom: 1 to: ((fields first name size) min: tableLength)).
-	stream nextPutAll: (maxLength - stream position >= 4 ifTrue: ['_IDX'] ifFalse: ['X']).
-	^stream contents.
+	stream nextPutAll: (fields first name
+			 copyFrom: 1
+			 to: (fields first name size min: tableLength)).
+	stream nextPutAll: (maxLength - stream position >= 4
+			 ifTrue: [ '_IDX' ]
+			 ifFalse: [ 'X' ]).
+	^ stream contents
 ]
 
 { #category : #testing }
 DatabaseIndex >> indexesField: aField [
-	^fields includes: aField.
+
+	^ fields includes: aField
 ]
 
 { #category : #initializing }
 DatabaseIndex >> initialize [
-	fields := OrderedCollection new: 2.
+
+	fields := OrderedCollection new: 2
 ]
 
 { #category : #comparing }
 DatabaseIndex >> isTheSameAs: aDatabaseIndex [
 	"Validate that two indexes are exactly the same. Most useful for testing purposes, rather than normal usage, which is why we don't just use the #= method."
-	self name asUppercase = aDatabaseIndex name asUppercase ifFalse: [^false].
-	self fields with: aDatabaseIndex fields  do: [:a :b | (a isTheSameAs: b) ifFalse: [^false]].	
-	^true.
+
+	self name asUppercase = aDatabaseIndex name asUppercase ifFalse: [ 
+		^ false ].
+	self fields
+		with: aDatabaseIndex fields
+		do: [ :a :b | (a isTheSameAs: b) ifFalse: [ ^ false ] ].
+	^ true
 ]
 
 { #category : #accessing }
 DatabaseIndex >> name [
-	name isNil ifTrue: [name := self generateName].
-	^name.
+
+	name isNil ifTrue: [ name := self generateName ].
+	^ name
 ]
 
 { #category : #accessing }
 DatabaseIndex >> name: aString [
-	name := aString.
+
+	name := aString
 ]
 
 { #category : #printing }
 DatabaseIndex >> printStatementOn: aStream [
+
 	aStream nextPut: $(.
-	fields do: [ :f | aStream nextPutAll: f name; nextPut: $, ].
-	aStream skip: -1; nextPut: $)
+	fields do: [ :f | 
+		aStream
+			nextPutAll: f name;
+			nextPut: $, ].
+	aStream
+		skip: -1;
+		nextPut: $)
 ]
 
 { #category : #printing }
@@ -111,6 +139,11 @@ DatabaseIndex >> printStatementOn: aStream platform: aPlatform [
 	"Some platforms need to quote some column names."
 
 	aStream nextPut: $(.
-	fields do: [ :f | aStream nextPutAll: (aPlatform nameForColumn: f name); nextPut: $, ].
-	aStream skip: -1; nextPut: $)
+	fields do: [ :f | 
+		aStream
+			nextPutAll: (aPlatform nameForColumn: f name);
+			nextPut: $, ].
+	aStream
+		skip: -1;
+		nextPut: $)
 ]

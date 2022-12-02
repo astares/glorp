@@ -2,20 +2,23 @@ Extension { #name : #DatabaseRow }
 
 { #category : #'*Glorp' }
 DatabaseRow class >> emptySlot [
-	emptySlot == nil ifTrue: [emptySlot := Object new].
-	^emptySlot.
+
+	emptySlot == nil ifTrue: [ emptySlot := Object new ].
+	^ emptySlot
 ]
 
 { #category : #'*Glorp' }
 DatabaseRow class >> missingFieldIndicator [
-	missingFieldIndicator == nil ifTrue: [missingFieldIndicator := Object new].
-	^missingFieldIndicator.
+
+	missingFieldIndicator == nil ifTrue: [ 
+		missingFieldIndicator := Object new ].
+	^ missingFieldIndicator
 ]
 
 { #category : #'*Glorp' }
 DatabaseRow class >> new [
 
-	^super new initialize.
+	^ super new initialize
 ]
 
 { #category : #'*Glorp' }

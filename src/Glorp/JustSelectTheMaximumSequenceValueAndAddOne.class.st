@@ -12,18 +12,20 @@ Class {
 		'field',
 		'table'
 	],
-	#category : 'Glorp-Database'
+	#category : #'Glorp-Database'
 }
 
 { #category : #accessing }
 JustSelectTheMaximumSequenceValueAndAddOne >> field [
-	field isNil ifTrue: [field := table primaryKeyFields first].
-	^field.
+
+	field isNil ifTrue: [ field := table primaryKeyFields first ].
+	^ field
 ]
 
 { #category : #accessing }
 JustSelectTheMaximumSequenceValueAndAddOne >> field: aDatabaseField [
-	field := aDatabaseField.
+
+	field := aDatabaseField
 ]
 
 { #category : #other }
@@ -33,29 +35,34 @@ JustSelectTheMaximumSequenceValueAndAddOne >> getSequenceValueFromDatabaseFor: a
 	"I repeat: ick"
 	stream := WriteStream on: (String new: 50).
 	stream nextPutAll: 'SELECT MAX('.
-	aField printSQLOn: stream withParameters: #().
+	aField printSQLOn: stream withParameters: #(  ).
 	stream nextPutAll: ') FROM '.
-	aRow table printSQLOn: stream withParameters: #().
+	aRow table printSQLOn: stream withParameters: #(  ).
 	rows := aSession accessor executeSQLString: stream contents.
-	value := rows first first isNil ifTrue: [1] ifFalse: [rows first first + 1].
+	value := rows first first isNil
+		         ifTrue: [ 1 ]
+		         ifFalse: [ rows first first + 1 ].
 	aRow at: aField put: value.
-	^value.
+	^ value
 ]
 
 { #category : #other }
 JustSelectTheMaximumSequenceValueAndAddOne >> reserveSequenceNumbers: anInteger in: anAccessor for: aTable [
+
 	| numberNeeded firstNumber fakeRow |
 	numberNeeded := anInteger - self availableReservedNumbers.
-	numberNeeded <= 0 ifTrue: [^self].
+	numberNeeded <= 0 ifTrue: [ ^ self ].
 	fakeRow := DatabaseRow newForTable: self field table.
 	firstNumber := self
-		getSequenceValueFromDatabaseFor: self field
-		in: fakeRow
-		using: anAccessor.
-	self reservedNumbers addAll: (firstNumber to: firstNumber + numberNeeded - 1).
+		               getSequenceValueFromDatabaseFor: self field
+		               in: fakeRow
+		               using: anAccessor.
+	self reservedNumbers addAll:
+		(firstNumber to: firstNumber + numberNeeded - 1)
 ]
 
 { #category : #accessing }
 JustSelectTheMaximumSequenceValueAndAddOne >> table: aTable [
-	table := aTable.
+
+	table := aTable
 ]

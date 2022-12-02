@@ -16,7 +16,7 @@ Class {
 		'statement',
 		'busy'
 	],
-	#category : 'Glorp-Database'
+	#category : #'Glorp-Database'
 }
 
 { #category : #'*Glorp' }
@@ -28,50 +28,59 @@ GlorpPreparedStatement class >> new [
 
 { #category : #accessing }
 GlorpPreparedStatement >> busy [
-	^busy.
+
+	^ busy
 ]
 
 { #category : #accessing }
 GlorpPreparedStatement >> busy: aBoolean [
-	busy := aBoolean.
+
+	busy := aBoolean
 ]
 
 { #category : #'As yet unclassified' }
 GlorpPreparedStatement >> glorpNoticeOfExpiryIn: aSession [
-	self release.
+
+	self release
 ]
 
 { #category : #'initialize-release' }
 GlorpPreparedStatement >> initialize [
-	busy := false.
+
+	busy := false
 ]
 
 { #category : #'As yet unclassified' }
 GlorpPreparedStatement >> release [
+
 	super release.
-	statement isNil ifFalse: [
+	statement isNil ifFalse: [ 
 		| stmt |
 		stmt := statement.
 		statement := nil.
-		stmt disconnect].
+		stmt disconnect ]
 ]
 
 { #category : #accessing }
 GlorpPreparedStatement >> signature [
-	^signature
+
+	^ signature
 ]
 
 { #category : #accessing }
 GlorpPreparedStatement >> signature: aString [
+
 	signature := aString
 ]
 
 { #category : #accessing }
 GlorpPreparedStatement >> statement [
-	^statement
+
+	^ statement
 ]
 
 { #category : #accessing }
 GlorpPreparedStatement >> statement: aStatementHandle [
+
 	statement := aStatementHandle
 ]

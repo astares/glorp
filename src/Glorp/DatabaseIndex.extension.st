@@ -2,19 +2,22 @@ Extension { #name : #DatabaseIndex }
 
 { #category : #'*Glorp' }
 DatabaseIndex class >> forField: aField [
-	^(self new initialize)
-		addField: aField;
-		yourself
+
+	^ self new initialize
+		  addField: aField;
+		  yourself
 ]
 
 { #category : #'*Glorp' }
 DatabaseIndex class >> forFields: aCollection [
-	^(self new)
-		addFields: aCollection;
-		yourself
+
+	^ self new
+		  addFields: aCollection;
+		  yourself
 ]
 
 { #category : #'*Glorp' }
 DatabaseIndex class >> new [
-	^super new initialize.
+
+	^ super new initialize
 ]

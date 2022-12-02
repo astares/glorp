@@ -20,47 +20,57 @@ Class {
 		'tableSelectCommand',
 		'schema'
 	],
-	#category : 'Glorp-Database'
+	#category : #'Glorp-Database'
 }
 
 { #category : #SQL }
 NamedSequence >> availableReservedNumbers [
-	^self reservedNumbers size.
+
+	^ self reservedNumbers size
 ]
 
 { #category : #sequencing }
 NamedSequence >> dropString [
 
-	^'Drop sequence ', self qualifiedName.
+	^ 'Drop sequence ' , self qualifiedName
 ]
 
 { #category : #SQL }
 NamedSequence >> maximumToReserveAtOnce [
-		^1000.
+
+	^ 1000
 ]
 
 { #category : #accessing }
 NamedSequence >> name [
-	^name.
+
+	^ name
 ]
 
 { #category : #accessing }
 NamedSequence >> name: aString [
-	name := aString.
+
+	name := aString
 ]
 
 { #category : #printing }
 NamedSequence >> printOn: aStream [
+
 	super printOn: aStream.
 	aStream
 		nextPut: $(;
-		nextPutAll: (name isNil ifTrue: ['unnamed'] ifFalse: [name]);
-		nextPut: $).
+		nextPutAll: (name isNil
+				 ifTrue: [ 'unnamed' ]
+				 ifFalse: [ name ]);
+		nextPut: $)
 ]
 
 { #category : #accessing }
 NamedSequence >> qualifiedName [
-	^(schema isNil or: [schema isEmpty]) ifTrue: [name] ifFalse: [schema, '.', name].
+
+	^ (schema isNil or: [ schema isEmpty ])
+		  ifTrue: [ name ]
+		  ifFalse: [ schema , '.' , name ]
 ]
 
 { #category : #SQL }
@@ -91,21 +101,25 @@ NamedSequence >> reserveViaTableSelect: anInteger in: aSession for: aTable [
 
 { #category : #accessing }
 NamedSequence >> schema [
-	^schema
+
+	^ schema
 ]
 
 { #category : #accessing }
 NamedSequence >> schema: aString [
+
 	schema := aString
 ]
 
 { #category : #SQL }
 NamedSequence >> tableSelectCommandFor: aTable in: aSession reserving: anObject [
-	self subclassResponsibility.
+
+	self subclassResponsibility
 ]
 
 { #category : #SQL }
 NamedSequence >> tableToSelectFromFor: aTable [
 	"Sometimes it's inefficient to select sequence values against our own table and we can use a database-specific system table instead to be much faster. Subclasses can override where this is the case"
-	^aTable.
+
+	^ aTable
 ]

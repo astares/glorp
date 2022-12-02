@@ -16,33 +16,38 @@ Class {
 		'stToDbSelector',
 		'dbToStSelector'
 	],
-	#category : 'Glorp-Database'
+	#category : #'Glorp-Database'
 }
 
 { #category : #'*Glorp' }
 DelegatingDatabaseConverter class >> hostedBy: anObject fromStToDb: stDbSelector fromDbToSt: dbStSelector [
 
-	^super new
-		hostedBy: anObject fromStToDb: stDbSelector fromDbToSt: dbStSelector
+	^ super new
+		  hostedBy: anObject
+		  fromStToDb: stDbSelector
+		  fromDbToSt: dbStSelector
 ]
 
 { #category : #'*Glorp' }
 DelegatingDatabaseConverter class >> named: aSymbol hostedBy: anObject fromStToDb: stDbSelector fromDbToSt: dbStSelector [
-	^super new
-		named: aSymbol
-		hostedBy: anObject
-		fromStToDb: stDbSelector
-		fromDbToSt: dbStSelector.
+
+	^ super new
+		  named: aSymbol
+		  hostedBy: anObject
+		  fromStToDb: stDbSelector
+		  fromDbToSt: dbStSelector
 ]
 
 { #category : #converting }
-DelegatingDatabaseConverter >> convert: anObject fromDatabaseRepresentationAs: aDatabaseType [ 
-	^host perform: dbToStSelector with: anObject with: aDatabaseType
+DelegatingDatabaseConverter >> convert: anObject fromDatabaseRepresentationAs: aDatabaseType [
+
+	^ host perform: dbToStSelector with: anObject with: aDatabaseType
 ]
 
 { #category : #converting }
-DelegatingDatabaseConverter >> convert: anObject toDatabaseRepresentationAs: aDatabaseType [ 
-	^host perform: stToDbSelector with: anObject with: aDatabaseType.
+DelegatingDatabaseConverter >> convert: anObject toDatabaseRepresentationAs: aDatabaseType [
+
+	^ host perform: stToDbSelector with: anObject with: aDatabaseType
 ]
 
 { #category : #'initialize-release' }

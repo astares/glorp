@@ -16,46 +16,53 @@ Class {
 		'sequenceIncrement',
 		'accessProtect'
 	],
-	#category : 'Glorp-Database'
+	#category : #'Glorp-Database'
 }
 
 { #category : #testing }
 OracleSequence >> alwaysGetFromDb [
-	^sequenceIncrement = 1
+
+	^ sequenceIncrement = 1
 ]
 
 { #category : #private }
 OracleSequence >> backupReserveCommand: anInteger in: aSession [
+
 	| command stream |
 	stream := WriteStream on: (String new: 200).
 	stream nextPutAll: 'select '.
 	stream nextPutAll: self qualifiedName.
 	stream nextPutAll: '.nextval from SYS.ALL_OBJECTS '.
 	stream nextPutAll: ' WHERE rownum <= '.
-	stream
-		nextPutAll:
-			(aSession useBinding ifTrue: ['?'] ifFalse: [anInteger printString]).
+	stream nextPutAll: (aSession useBinding
+			 ifTrue: [ '?' ]
+			 ifFalse: [ anInteger printString ]).
 	command := SQLStringSelectCommand new.
 	command setSQLString: stream contents.
 	command parameters: (Array with: anInteger).
 	command session: aSession.
-	^command.
+	^ command
 ]
 
 { #category : #public }
 OracleSequence >> creationString [
-	^self sequenceIncrement > 1
-		ifFalse: ['create sequence ', self qualifiedName]
-		ifTrue: ['create sequence ', self qualifiedName, ' increment by ', self sequenceIncrement printString]
+
+	^ self sequenceIncrement > 1
+		  ifFalse: [ 'create sequence ' , self qualifiedName ]
+		  ifTrue: [ 
+			  'create sequence ' , self qualifiedName , ' increment by '
+			  , self sequenceIncrement printString ]
 ]
 
 { #category : #public }
-OracleSequence >> getSequenceValueFromDatabaseFor: aField in: aRow using: anAccessor [ 
+OracleSequence >> getSequenceValueFromDatabaseFor: aField in: aRow using: anAccessor [
+
 	aRow at: aField put: (self nextSequenceNumber: anAccessor)
 ]
 
 { #category : #'initalize-release' }
 OracleSequence >> initialize [
+
 	super initialize.
 	count := 0.
 	sequenceIncrement := 1.
@@ -64,28 +71,36 @@ OracleSequence >> initialize [
 
 { #category : #accessing }
 OracleSequence >> name: aString [
-	name := aString copyFrom: 1 to: (aString size min: OraclePlatform new maximumLengthOfTableName).
+
+	name := aString
+		        copyFrom: 1
+		        to:
+		        (aString size min:
+			         OraclePlatform new maximumLengthOfTableName)
 ]
 
 { #category : #private }
-OracleSequence >> nextSequenceNumber: anAccessor [ 
-	accessProtect critical: 
-			[count := count + 1.
-			^(self alwaysGetFromDb or: [count \\ sequenceIncrement = 1]) 
-				ifTrue: 
-					[count := (anAccessor 
-								executeSQLString: self nextSequenceNumberSelectString) first 
-								first]
-				ifFalse: [count]]
+OracleSequence >> nextSequenceNumber: anAccessor [
+
+	accessProtect critical: [ 
+		count := count + 1.
+		^ (self alwaysGetFromDb or: [ count \\ sequenceIncrement = 1 ])
+			  ifTrue: [ 
+				  count := (anAccessor executeSQLString:
+					            self nextSequenceNumberSelectString) first first ]
+			  ifFalse: [ count ] ]
 ]
 
 { #category : #private }
 OracleSequence >> nextSequenceNumberSelectString [
-	^'SELECT ' , self qualifiedName , '.NEXTVAL FROM DUAL'
+
+	^ 'SELECT ' , self qualifiedName , '.NEXTVAL FROM DUAL'
 ]
 
 { #category : #public }
 OracleSequence >> postWriteAssignSequenceValueFor: aField in: aRow using: anAccessor [
+
+	
 ]
 
 { #category : #private }
@@ -96,15 +111,16 @@ OracleSequence >> reserveViaBackupMechanism: anInteger in: aSession [
 	command := self backupReserveCommand: anInteger in: aSession.
 	command blockFactor: anInteger.
 	rows := aSession accessor executeCommand: command.
-	rows do: [:each | self reservedNumbers add: each first].
+	rows do: [ :each | self reservedNumbers add: each first ]
 ]
 
 { #category : #private }
 OracleSequence >> reserveViaTableSelect: anInteger in: aSession for: aTable [
 	"In Oracle, there can be performance issues selecting against our tables, which we don't seem to get if we just use SYS.ALLOBJECTS. I'm suspicious the problem is if we have fragmentation of the file containing the table, but regardless, ALLOBJECTS seems consistently fast, so always use it"
-	self reserveViaBackupMechanism: anInteger in: aSession.
 
-"	| rows command |
+	self reserveViaBackupMechanism: anInteger in: aSession
+
+	"	| rows command |
 	command := self
 		tableSelectCommandFor: aTable
 		in: aSession
@@ -116,16 +132,19 @@ OracleSequence >> reserveViaTableSelect: anInteger in: aSession for: aTable [
 
 { #category : #accessing }
 OracleSequence >> sequenceIncrement [
-	^sequenceIncrement
+
+	^ sequenceIncrement
 ]
 
 { #category : #accessing }
-OracleSequence >> sequenceIncrement: aNumber [ 
+OracleSequence >> sequenceIncrement: aNumber [
+
 	sequenceIncrement := aNumber
 ]
 
 { #category : #SQL }
 OracleSequence >> tableSelectCommandFor: aTable in: aSession reserving: anInteger [
+
 	| stream |
 	(tableSelectCommand notNil and: [tableSelectCommand parameters includes: anInteger]) ifFalse:
 			[stream := WriteStream on: (String new: 200).
